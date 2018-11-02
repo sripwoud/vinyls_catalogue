@@ -10,8 +10,8 @@ Base = declarative_base()
 
 class Genre(Base):
     __tablename__ = "genre"
-    name = Column(String(20), nullable=False)
-    id = Column(Integer, primary_key=True)
+    name = Column(String(20), primary_key=True)
+    #id = Column(Integer, primary_key=True)
 
 
 class Album(Base):
@@ -20,9 +20,9 @@ class Album(Base):
     title = Column(String(80), nullable=False)
     artist = Column(String(80), nullable=False)
     label = Column(String(80), nullable=False)
-    released = Column(String())
+    released = Column(String(4))
 
-    genre_id = Column(Integer, ForeignKey('genre.id'))
+    genre_name = Column(String(20), ForeignKey('genre.name'))
     genre = relationship(Genre)
 
 
