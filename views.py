@@ -24,6 +24,7 @@ def newGenre():
         if not session.query(Genre).filter_by(name=request.form['name']).first():
             session.add(Genre(name=request.form['name']))
             session.commit()
+            flash('New Genre added!')
             return redirect(url_for('showGenres'))
         else:
             flash('This genre already exists!')
