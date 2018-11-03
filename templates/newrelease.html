@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>New release</title>
+</head>
+<body>
+  <h1>Add new release to genre '{{genre.name}}'</h1>
+    <form action="{{url_for('newRelease', genre_id=genre.id)}}" method="POST">
+      <input type="text" name="title" placeholder="Title" required>
+      <input type="text" name="artist" placeholder="Artist" required>
+      <input type="text" name="label" placeholder="Label" required>
+      <input type="text" name="released" placeholder="Released on" required>
+      <input type="submit" value="Create">
+    </form>
+</body>
+</html>

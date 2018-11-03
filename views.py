@@ -58,7 +58,18 @@ def showReleases(genre_id):
 
 @app.route('/genre/<int:genre_id>/new/', methods=['GET', 'POST'])
 def newRelease(genre_id):
-    return 'Page to add new release to genre {}'.format(genre_id)
+    genre = session.query(Genre).filter_by(id=genre_id).one()
+    if request.method == 'POST':
+        release = Album(title=request.form['title'],
+                        artist=request.form['artist'],
+                        label=request.form['label'],
+                        released=request.form['released'],
+                        genre_id=genre.id)
+        session.add(release)
+        session.commit()
+        return redirect(url_for('showReleases', genre_id=genre_id))
+    if request.method == 'GET':
+        return render_template('newrelease.html', genre=genre)
 
 
 @app.route('/genre/<int:genre_id>/<int:release_id>/edit/',

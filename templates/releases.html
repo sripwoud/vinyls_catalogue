@@ -8,6 +8,7 @@
 </head>
 <body>
   <h1>{{genre.name}} releases</h1>
+  <a href="{{url_for('newRelease', genre_id=genre.id)}}">Add new release</a>
   <ul>
     {% for release in releases %}
       <li>
