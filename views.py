@@ -78,9 +78,17 @@ def editRelease(genre_id, release_id):
     return 'Page to edit release {} of genre {}'.format(release_id, genre_id)
 
 
-@app.route('/genre/<int:genre_id>/<int:release_id>/delete/')
+@app.route('/genre/<int:genre_id>/<int:release_id>/delete/', methods=['GET', 'POST'])
 def deleteRelease(genre_id, release_id):
-    return 'Page to delete release {} of genre {}'.format(release_id, genre_id)
+    genre = session.query(Genre).filter_by(id=genre_id).one()
+    release = session.query(Album).filter_by(id=release_id).one()
+    if request.method == 'POST':
+        session.delete(release)
+        session.commit()
+        flash('Release deleted!')
+        return redirect(url_for('showReleases', genre_id=genre_id))
+    if request.method == 'GET':
+        return render_template('deleterelease.html', genre=genre, release=release)
 
 
 # TODO: Make API endpoints
