@@ -15,7 +15,7 @@
       {% endfor %}
     {% endif %}
   {% endwith %}
-  <form action="#" method="POST">
+  <form action="{{url_for('newGenre')}}" method="POST">
     <input type="text" placeholder='name' name='name' required>
     <input type="submit" value='Create'>
   </form>
