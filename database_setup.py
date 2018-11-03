@@ -22,7 +22,7 @@ class Album(Base):
     label = Column(String(80), nullable=False)
     released = Column(String(4))
 
-    genre_name = Column(String(20), ForeignKey('genre.name'))
+    genre_id = Column(Integer, ForeignKey('genre.id'))
     genre = relationship(Genre)
 
 
@@ -38,3 +38,5 @@ class Song(Base):
 
 engine = create_engine('sqlite:///vinyls.db')
 Base.metadata.create_all(engine)
+if __name__ == '__main__':
+    print 'DB set up'
