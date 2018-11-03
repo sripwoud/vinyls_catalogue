@@ -94,7 +94,10 @@ def getReleaseInfo(id_str):
         released = infos['released']
     except KeyError:
         released = ''
-    genre = infos['genres'][0]
+    try:
+        genre = infos['genres'][0]
+    except KeyError:
+        genre = ''
     label = infos['labels'][0]['name']
     songs = [{
             'position': track['position'],
@@ -121,6 +124,7 @@ def populateDb(username):
             genre = Genre(name=infos['genre'])
             session.add(genre)
             session.commit()
+            print 'Genre added'
         else:
             genre = session.query(Genre).filter_by(name=infos['genre']).first()
         album = Album(
@@ -132,6 +136,7 @@ def populateDb(username):
                 )
         session.add(album)
         session.commit()
+        print 'Album added'
 
         for song in infos['songs']:
             song = Song(
@@ -141,7 +146,8 @@ def populateDb(username):
                         )
             session.add(song)
             session.commit()
-    print 'DB populated with Discogs data!'
+            print 'song added'
+    print 'Insertion of new items in DB !'
     #test
     print len(session.query(Album).all())
 
