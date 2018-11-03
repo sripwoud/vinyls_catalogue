@@ -13,8 +13,7 @@ app = Flask(__name__)
 @app.route('/')
 @app.route('/genres/')
 def showGenres():
-    genres_count = session.query(Genre.id, Genre.name, func.count(Album.genre_name)).outerjoin(Album).group_by(Genre).order_by(Genre.name).all()
-    print genres_count
+    genres_count = session.query(Genre.id, Genre.name, func.count(Album.genre_id)).outerjoin(Album).group_by(Genre).order_by(Genre.name).all()
     return render_template('genres.html', genres_count=genres_count)
 
 
@@ -52,7 +51,9 @@ def deleteGenre(genre_id):
 
 @app.route('/genre/<int:genre_id>/')
 def showReleases(genre_id):
-    return 'Page to display all releases of genre {}'.format(genre_id)
+    genre = session.query(Genre).filter_by(id=genre_id).one()
+    releases = session.query(Album).filter_by(genre_id=genre_id).order_by(Album.title).all()
+    return render_template('releases.html', genre=genre, releases=releases)
 
 
 @app.route('/genre/<int:genre_id>/new/', methods=['GET', 'POST'])
