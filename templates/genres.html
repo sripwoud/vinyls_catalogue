@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Vinyls app</title>
+</head>
+<body>
+  <h1>Vinyls Catalogue</h1>
+  <a href="{{url_for('newGenre')}}">Add new genre</a>
+  <ul>
+    {% for genre_count in genres_count %}
+    <li>
+        <a href="#">{{genre_count[0]}}</a>
+        <p>{{genre_count[1]}} Release(s)</p>
+        <a href="#">Edit</a>
+        <a href="#">Delete</a>
+    </li>
+    {% endfor %}
+  </ul>
+</body>
+</html>
