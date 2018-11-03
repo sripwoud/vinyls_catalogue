@@ -10,8 +10,8 @@ Base = declarative_base()
 
 class Genre(Base):
     __tablename__ = "genre"
-    name = Column(String(20), primary_key=True)
-    #id = Column(Integer, primary_key=True)
+    name = Column(String(20), nullable=False)
+    id = Column(Integer, primary_key=True)
 
 
 class Album(Base):
