@@ -13,7 +13,7 @@ app = Flask(__name__)
 @app.route('/')
 @app.route('/genres/')
 def showGenres():
-    genres_count = session.query(Genre.name, func.count(Album.genre_name)).outerjoin(Album).group_by(Genre).order_by(Genre.name).all()
+    genres_count = session.query(Genre.id, Genre.name, func.count(Album.genre_name)).outerjoin(Album).group_by(Genre).order_by(Genre.name).all()
     print genres_count
     return render_template('genres.html', genres_count=genres_count)
 
@@ -38,9 +38,16 @@ def editGenre(genre_id):
     return 'Page to edit existing genre {}'.format(genre_id)
 
 
-@app.route('/genre/<int:genre_id>/delete/')
+@app.route('/genre/<int:genre_id>/delete/', methods=['GET', 'POST'])
 def deleteGenre(genre_id):
-    return 'Page to delete existing genre'
+    genre = session.query(Genre).filter_by(id=genre_id).one()
+    if request.method == 'POST':
+        session.delete(genre)
+        session.commit()
+        flash('Genre deleted!')
+        return redirect(url_for('showGenres'))
+    else:
+        return render_template('deletegenre.html', genre=genre)
 
 
 @app.route('/genre/<int:genre_id>/')

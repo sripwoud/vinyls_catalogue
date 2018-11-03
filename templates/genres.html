@@ -19,10 +19,10 @@
   <ul>
     {% for genre_count in genres_count %}
     <li>
-        <a href="#">{{genre_count[0]}}</a>
-        <p>{{genre_count[1]}} Release(s)</p>
+        <a href="#">{{genre_count[1]}}</a>
+        <p>{{genre_count[2]}} Release(s)</p>
         <a href="#">Edit</a>
-        <a href="#">Delete</a>
+        <a href="{{url_for('deleteGenre', genre_id=genre_count[0])}}">Delete</a>
     </li>
     {% endfor %}
   </ul>
