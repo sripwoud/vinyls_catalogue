@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Edit release of genre '{{genre.name}}'</title>
+</head>
+<body>
+  <form action="{{url_for('editRelease', genre_id=genre.id, release_id=release.id)}}" method="POST">
+      <input type="text" name="title" placeholder="{{release.title}}">
+      <input type="text" name="artist" placeholder="{{release.artist}}">
+      <input type="text" name="label" placeholder="{{release.label}}">
+      <input type="text" name="released" placeholder="{{release.released}}">
+      <input type="submit" value="Edit">
+  </form>
+  <a href="{{url_for('showReleases', genre_id=genre.id)}}">Back</a>
+</body>
+</html>

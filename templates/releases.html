@@ -24,6 +24,7 @@
         <p>Label: {{release.label}}</p>
         <p>Released on {{release.released}}</p>
         <a href="{{url_for('deleteRelease', genre_id=genre.id, release_id=release.id)}}">Delete</a>
+        <a href="{{url_for('editRelease', genre_id=genre.id, release_id=release.id)}}">Edit</a>
       </li>
     {% endfor %}
   </ul>

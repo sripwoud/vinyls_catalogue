@@ -40,7 +40,7 @@ def editGenre(genre_id):
             genre.name = request.form['name']
             session.add(genre)
             session.commit()
-            falsh('Genre updated!')
+            flash('Genre updated!')
         return redirect(url_for('showGenres'))
     return render_template('editgenre.html', genre=genre)
 
@@ -84,7 +84,22 @@ def newRelease(genre_id):
 @app.route('/genre/<int:genre_id>/<int:release_id>/edit/',
            methods=['GET', 'POST'])
 def editRelease(genre_id, release_id):
-    return 'Page to edit release {} of genre {}'.format(release_id, genre_id)
+    genre = session.query(Genre).filter_by(id=genre_id).one()
+    release = session.query(Album).filter_by(id=release_id).one()
+    if request.method == 'POST':
+        if request.form['title']:
+            release.title = request.form['title']
+        if request.form['artist']:
+            release.artist = request.form['artist']
+        if request.form['label']:
+            release.label = request.form['label']
+        if request.form['released']:
+            release.released = request.form['released']
+        session.add(release)
+        session.commit()
+        flash('Release updated!')
+        return redirect(url_for('showReleases', genre_id=genre_id))
+    return render_template('editrelease.html', genre=genre, release=release)
 
 
 @app.route('/genre/<int:genre_id>/<int:release_id>/delete/', methods=['GET', 'POST'])
