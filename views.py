@@ -67,6 +67,7 @@ def newRelease(genre_id):
                         genre_id=genre.id)
         session.add(release)
         session.commit()
+        flash('New release added!')
         return redirect(url_for('showReleases', genre_id=genre_id))
     if request.method == 'GET':
         return render_template('newrelease.html', genre=genre)

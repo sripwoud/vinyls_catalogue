@@ -8,6 +8,13 @@
 </head>
 <body>
   <h1>{{genre.name}} releases</h1>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for message in messages %}
+        <strong>{{message}}</strong></br>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
   <a href="{{url_for('newRelease', genre_id=genre.id)}}">Add new release</a>
   <ul>
     {% for release in releases %}
