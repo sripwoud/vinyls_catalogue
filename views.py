@@ -34,7 +34,15 @@ def newGenre():
 
 @app.route('/genre/<int:genre_id>/edit/', methods=['GET', 'POST'])
 def editGenre(genre_id):
-    return 'Page to edit existing genre {}'.format(genre_id)
+    genre = session.query(Genre).filter_by(id=genre_id).one()
+    if request.method == 'POST':
+        if request.form['name']:
+            genre.name = request.form['name']
+            session.add(genre)
+            session.commit()
+            falsh('Genre updated!')
+        return redirect(url_for('showGenres'))
+    return render_template('editgenre.html', genre=genre)
 
 
 @app.route('/genre/<int:genre_id>/delete/', methods=['GET', 'POST'])
