@@ -24,13 +24,17 @@
     {% endif %}
     {% endwith %}
     <a href="{{url_for('newGenre')}}">Add new genre</a>
-    <ul>
+    <ul class='flexbox'>
       {% for genre_count in genres_count %}
-      <li>
-        <a href="{{url_for('showReleases', genre_id=genre_count[0])}}">{{genre_count[1]}}</a>
-        <p>{{genre_count[2]}} Release(s)</p>
-        <a href="{{url_for('editGenre', genre_id=genre_count[0])}}">Edit</a>
-        <a href="{{url_for('deleteGenre', genre_id=genre_count[0])}}">Delete</a>
+      <li class='list'>
+        <a href="{{url_for('showReleases', genre_id=genre_count[0])}}" class="link-container">
+        <div class="list-container">
+          <h3>{{genre_count[1]}}</h3>
+          <p>{{genre_count[2]}} Release(s)</p>
+        </div>
+          <a href="{{url_for('editGenre', genre_id=genre_count[0])}}">Edit</a>
+          <a href="{{url_for('deleteGenre', genre_id=genre_count[0])}}">Delete</a>
+        </a>
       </li>
       {% endfor %}
     </ul>
