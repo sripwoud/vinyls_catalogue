@@ -22,7 +22,6 @@ body {
 	/* margin: 0; */
 	position:relative;
 	max-width: 100%;
-	margin: auto;
 	overflow-x: hidden;
 }
 
@@ -41,7 +40,7 @@ main {
     box-shadow: 0px 2px 5px 0px #eceee4;
     list-style: none;
     font-size: 17px;
-    margin: 0;
+    margin: 5px;
     width: 100%;
 }
 
@@ -86,6 +85,24 @@ li.list{
 	padding: 5px;
 	margin: 5px;
 	width: 45%;
+}
+
+.song-list {
+	display: flex;
+	flex-flow: column nowrap;
+	width: 100%;
+	margin: auto;
+	padding: 0;
+	align-content: center;
+}
+
+.song {
+	box-shadow: 0px 2px 5px 0px #eceee4;
+	list-style: none;
+	text-align: center;
+	padding: 5px;
+	margin: 5px;
+	width: 100%;
 }
 
 .link-container {

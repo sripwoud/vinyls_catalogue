@@ -32,9 +32,9 @@
           <h3>{{genre_count[1]}}</h3>
           <p>{{genre_count[2]}} Release(s)</p>
         </div>
+      </a>
           <a href="{{url_for('editGenre', genre_id=genre_count[0])}}">Edit</a>
           <a href="{{url_for('deleteGenre', genre_id=genre_count[0])}}">Delete</a>
-        </a>
       </li>
       {% endfor %}
     </ul>

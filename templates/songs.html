@@ -35,17 +35,13 @@
     {% endif %}
     {% endwith %}
     <a href="{{url_for('newSong', release_id=release.id)}}">Add new song</a>
-    <ul>
+    <ul class='song-list'>
       {% for song in songs %}
-      <li>
+      <li class='song'>
         <span>{{song.position}}</span>
-        <span>{{song.title}}</span>
-        <span>
-          <a href="{{url_for('deleteSong', release_id=release.id, song_id=song.id)}}">Delete</a>
-        </span>
-        <span>
-          <a href="{{url_for('editSong', release_id=release.id, song_id=song.id)}}">Edit</a>
-        </span>
+        <span>{{song.title}}</span></br>
+        <a href="{{url_for('deleteSong', release_id=release.id, song_id=song.id)}}">Delete</a>
+        <a href="{{url_for('editSong', release_id=release.id, song_id=song.id)}}">Edit</a>
       </li>
       {% endfor %}
     </ul>

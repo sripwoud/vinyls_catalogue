@@ -35,17 +35,17 @@
     {% endif %}
     {% endwith %}
     <a href="{{url_for('newRelease', genre_id=genre.id)}}">Add new release</a>
-    <ul>
+    <ul class='flexbox'>
       {% for release in releases %}
-      <li>
-        <h3>
-	  <a href="{{url_for('showSongs', release_id=release.id)}}">
-	    {{release.title}}
-	  </a>
-	</h3>
-        <p>By {{release.artist}}</p>
-        <p>Label: {{release.label}}</p>
-        <p>Released on {{release.released}}</p>
+      <li class='list'>
+        <a href="{{url_for('showSongs', release_id=release.id)}}" class='link-container'>
+          <div class='list-container'>
+            <h3>{{release.title}}</h3>
+            <p>By {{release.artist}}</p>
+            <p>Label: {{release.label}}</p>
+            <p>Released on {{release.released}}</p>
+          </div>
+        </a>
         <a href="{{url_for('deleteRelease', genre_id=genre.id, release_id=release.id)}}">Delete</a>
         <a href="{{url_for('editRelease', genre_id=genre.id, release_id=release.id)}}">Edit</a>
       </li>
