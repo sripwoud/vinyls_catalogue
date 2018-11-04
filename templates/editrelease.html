@@ -23,7 +23,9 @@
           </a>
         </li>
         <li>
-          {{release.title}}
+          <a href="{{url_for('showSongs', release_id=release.id)}}">
+            {{release.title}}
+          </a>
         </li>
         <li>
           Edit
@@ -39,7 +41,6 @@
       <input type="text" name="released" placeholder="{{release.released}}">
       <input type="submit" value="Edit">
     </form>
-    <a href="{{url_for('showReleases', genre_id=genre.id)}}">Back</a>
   </main>
 </body>
 </html>
