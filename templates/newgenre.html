@@ -7,7 +7,14 @@
   <title>Add genre</title>
 </head>
 <body>
-  <h1>Add new genre</h1>
+  <header>
+    <nav>
+      <h1>
+        <a href="/">Vinyls Catalogue</a>
+      </h1>
+    </nav>
+  </header>
+  <h2>Add new genre</h2>
   {% with messages = get_flashed_messages() %}
     {% if messages %}
       {% for message in messages %}

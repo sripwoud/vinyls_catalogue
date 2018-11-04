@@ -7,8 +7,15 @@
   <title>Delete genre</title>
 </head>
 <body>
-  <h1>Delete Genre</h1>
-  <h2>Do you confirm you want to delete the genre '{{genre.name}}'?</h2>
+  <header>
+    <nav>
+      <h1>
+        <a href="/">Vinyls Catalogue</a>
+      </h1>
+    </nav>
+  </header>
+  <h2>Delete Genre</h2>
+  <h3>Do you confirm you want to delete the genre '{{genre.name}}'?</h3>
   <form action="{{url_for('deleteGenre', genre_id=genre.id)}}" method="POST">
     <input type="submit" value="Confirm">
     <a href="{{url_for('showGenres')}}">Cancel</a>

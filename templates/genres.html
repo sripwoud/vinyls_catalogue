@@ -7,7 +7,13 @@
   <title>Vinyls app</title>
 </head>
 <body>
-  <h1>Vinyls Catalogue</h1>
+  <header>
+    <nav>
+      <h1>
+        <a href="/">Vinyls Catalogue</a>
+      </h1>
+    </nav>
+  </header>
   {% with messages = get_flashed_messages() %}
     {% if messages %}
       {% for message in messages %}

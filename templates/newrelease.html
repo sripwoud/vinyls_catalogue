@@ -7,7 +7,14 @@
   <title>New release</title>
 </head>
 <body>
-  <h1>Add new release to genre '{{genre.name}}'</h1>
+  <header>
+    <nav>
+      <h1>
+        <a href="/">Vinyls Catalogue</a>
+      </h1>
+    </nav>
+  </header>
+  <h2>Add new release to genre '{{genre.name}}'</h2>
     <form action="{{url_for('newRelease', genre_id=genre.id)}}" method="POST">
       <input type="text" name="title" placeholder="Title" required>
       <input type="text" name="artist" placeholder="Artist" required>

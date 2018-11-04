@@ -7,7 +7,14 @@
   <title>Releases</title>
 </head>
 <body>
-  <h1>{{genre.name}} releases</h1>
+  <header>
+    <nav>
+      <h1>
+        <a href="/">Vinyls Catalogue</a>
+      </h1>
+    </nav>
+  </header>
+  <h2>{{genre.name}} releases</h2>
   {% with messages = get_flashed_messages() %}
     {% if messages %}
       {% for message in messages %}
@@ -19,7 +26,7 @@
   <ul>
     {% for release in releases %}
       <li>
-        <h2>{{release.title}}</h2>
+        <h3>{{release.title}}</h3>
         <p>By {{release.artist}}</p>
         <p>Label: {{release.label}}</p>
         <p>Released on {{release.released}}</p>
