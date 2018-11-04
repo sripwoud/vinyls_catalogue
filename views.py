@@ -1,11 +1,12 @@
 from sqlalchemy import create_engine, func
-from sqlalchemy.orm import sessionmaker
-from database_setup import Base, Genre, Album, Song
+from sqlalchemy.orm import sessionmaker, scoped_session
+from database_setup import Base, Genre, Album, Song, engine
+from addcollection import session
 from flask import Flask, render_template, redirect, url_for, request, flash
-engine = create_engine('sqlite:///vinyls.db')
-Base.metadata.bind = engine
-DBSession = sessionmaker(bind=engine)
-session = DBSession()
+# engine = create_engine('sqlite:///vinyls.db')
+# Base.metadata.bind = engine
+# DBSession = sessionmaker(bind=engine)
+# session = scoped_session(DBSession())
 
 app = Flask(__name__)
 

@@ -1,16 +1,16 @@
 from sqlalchemy import create_engine
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import sessionmaker
-from database_setup import Base, Genre, Album, Song
+from sqlalchemy.orm import sessionmaker, scoped_session
+from database_setup import Base, Genre, Album, Song, engine
 import httplib2
 import json
 import pprint
 
 pp = pprint.PrettyPrinter(indent=4)
 
-engine = create_engine('sqlite:///vinyls.db')
+# engine = create_engine('sqlite:///vinyls.db')
 Base.metadata.bind = engine
-DBSession = sessionmaker(bind=engine)
+DBSession = scoped_session(sessionmaker(bind=engine))
 session = DBSession()
 
 # test
@@ -85,25 +85,31 @@ def getReleaseInfo(id_str):
     try:
         artist = infos['artists'][0]['name']
     except KeyError:
-        artist = ''
+        artist = 'Unknown'
     try:
         title = infos['title']
     except KeyError:
-        title = ''
+        return
     try:
         released = infos['released']
     except KeyError:
-        released = ''
+        released = 'Unknown'
     try:
         genre = infos['genres'][0]
     except KeyError:
-        genre = ''
-    label = infos['labels'][0]['name']
-    songs = [{
-            'position': track['position'],
-            'title': track['title']
-            } for track in infos['tracklist']
-            ]
+        genre = 'Uncategorized'
+    try:
+        label = infos['labels'][0]['name']
+    except KeyError:
+        label = 'Unknown'
+    try:
+        songs = [{
+                'position': track['position'],
+                'title': track['title']
+                } for track in infos['tracklist']
+                ]
+    except KeyError:
+        return
     return {
             'genre': genre,
             'artist': artist,
@@ -119,37 +125,38 @@ def populateDb(username):
     """
     for release in getReleasesID(username):
         infos = getReleaseInfo(release)
-
-        if not session.query(Genre).filter_by(name=infos['genre']).first():
-            genre = Genre(name=infos['genre'])
-            session.add(genre)
+        if infos:
+            if not session.query(Genre).filter_by(name=infos['genre']).first():
+                genre = Genre(name=infos['genre'])
+                session.add(genre)
+                session.commit()
+                print 'Genre added'
+            else:
+                genre = session.query(Genre).filter_by(name=infos['genre']).first()
+            album = Album(
+                    title=infos['title'],
+                    artist=infos['artist'],
+                    label=infos['label'],
+                    released=infos['released'],
+                    genre=genre
+                    )
+            session.add(album)
             session.commit()
-            print 'Genre added'
-        else:
-            genre = session.query(Genre).filter_by(name=infos['genre']).first()
-        album = Album(
-                title=infos['title'],
-                artist=infos['artist'],
-                label=infos['label'],
-                released=infos['released'],
-                genre=genre
-                )
-        session.add(album)
-        session.commit()
-        print 'Album added'
+            print 'Album added'
 
-        for song in infos['songs']:
-            song = Song(
-                        position=song['position'],
-                        title=song['title'],
-                        album=album
-                        )
-            session.add(song)
-            session.commit()
-            print 'song added'
-    print 'Insertion of new items in DB !'
-    #test
+            for song in infos['songs']:
+                song = Song(
+                            position=song['position'],
+                            title=song['title'],
+                            album=album
+                            )
+                session.add(song)
+                session.commit()
+                print 'song added'
+    print 'Insertion of new items in DB completed !'
+    # test
     print len(session.query(Album).all())
 
 
-populateDb('Gry0u')
+if __name__ == '__main__':
+    populateDb('Gry0u')

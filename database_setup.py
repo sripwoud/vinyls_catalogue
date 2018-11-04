@@ -36,7 +36,5 @@ class Song(Base):
     album = relationship(Album)
 
 
-engine = create_engine('sqlite:///vinyls.db')
+engine = create_engine('sqlite:///vinyls.db', connect_args={'check_same_thread':False})
 Base.metadata.create_all(engine)
-if __name__ == '__main__':
-    print 'DB set up'
