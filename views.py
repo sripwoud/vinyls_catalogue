@@ -130,8 +130,8 @@ def showSongs(release_id):
 def newSong(release_id):
     release = session.query(Album).filter_by(id=release_id).one()
     if request.method == 'POST':
-        song = Album(title=request.form['title'],
-                     position=request.form['artist'],
+        song = Song(title=request.form['title'],
+                     position=request.form['position'],
                      release_id=release.id)
         session.add(song)
         session.commit()

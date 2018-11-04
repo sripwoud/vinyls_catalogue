@@ -4,9 +4,39 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+  <title>Edit song</title>
 </head>
 <body>
-  Edit song
+  <header>
+    <nav>
+      <h1>
+        <a href="/">Vinyls Catalogue</a>
+      </h1>
+      <ul id="breadcrumb" aria-label="Breadcrumb" role="navigation">
+        <li>
+          <a href="/">Home</a>
+        </li>
+        <li>
+          <a href="{{url_for('showSongs', release_id=release.id)}}">
+            {{release.title}}
+          </a>
+        </li>
+        <li>
+          {{song.title}}
+        </li>
+        <li>
+          Edit
+        </li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <form action="{{url_for('editSong', song_id=song.id, release_id=release.id)}}" method="POST">
+      <input type="text" name="title" placeholder="{{song.title}}">
+      <input type="text" name="position" placeholder="{{song.position}}">
+      <input type="submit" value="Edit">
+    </form>
+  </main>
 </body>
 </html>
