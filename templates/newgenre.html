@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
   <title>Add genre</title>
 </head>
 <body>
@@ -12,19 +13,29 @@
       <h1>
         <a href="/">Vinyls Catalogue</a>
       </h1>
+      <ul id="breadcrumb" aria-label="Breadcrumb" role="navigation">
+        <li>
+          <a href="/">Home</a>
+        </li>
+        <li>
+          New
+        </li>
+      </ul>
     </nav>
   </header>
-  <h2>Add new genre</h2>
-  {% with messages = get_flashed_messages() %}
+  <main>
+    <h2>Add new genre</h2>
+    {% with messages = get_flashed_messages() %}
     {% if messages %}
-      {% for message in messages %}
-        <strong>{{message}}</strong></br>
-      {% endfor %}
+    {% for message in messages %}
+    <strong>{{message}}</strong></br>
+    {% endfor %}
     {% endif %}
-  {% endwith %}
-  <form action="{{url_for('newGenre')}}" method="POST">
-    <input type="text" placeholder='name' name='name' required>
-    <input type="submit" value='Create'>
-  </form>
+    {% endwith %}
+    <form action="{{url_for('newGenre')}}" method="POST">
+      <input type="text" placeholder='name' name='name' required>
+      <input type="submit" value='Create'>
+    </form>
+  </main>
 </body>
 </html>

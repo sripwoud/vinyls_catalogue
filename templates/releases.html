@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
   <title>Releases</title>
 </head>
 <body>
@@ -12,19 +13,30 @@
       <h1>
         <a href="/">Vinyls Catalogue</a>
       </h1>
+      <ul id="breadcrumb" aria-label="Breadcrumb" role="navigation">
+        <li>
+          <a href="/">Home</a>
+        </li>
+        <li>
+          {{genre.name}}
+        </li>
+        <li>
+          Releases
+        </li>
+      </ul>
     </nav>
   </header>
-  <h2>{{genre.name}} releases</h2>
-  {% with messages = get_flashed_messages() %}
+  <main>
+    {% with messages = get_flashed_messages() %}
     {% if messages %}
-      {% for message in messages %}
-        <strong>{{message}}</strong></br>
-      {% endfor %}
+    {% for message in messages %}
+    <strong>{{message}}</strong></br>
+    {% endfor %}
     {% endif %}
-  {% endwith %}
-  <a href="{{url_for('newRelease', genre_id=genre.id)}}">Add new release</a>
-  <ul>
-    {% for release in releases %}
+    {% endwith %}
+    <a href="{{url_for('newRelease', genre_id=genre.id)}}">Add new release</a>
+    <ul>
+      {% for release in releases %}
       <li>
         <h3>{{release.title}}</h3>
         <p>By {{release.artist}}</p>
@@ -33,8 +45,8 @@
         <a href="{{url_for('deleteRelease', genre_id=genre.id, release_id=release.id)}}">Delete</a>
         <a href="{{url_for('editRelease', genre_id=genre.id, release_id=release.id)}}">Edit</a>
       </li>
-    {% endfor %}
-  </ul>
-
+      {% endfor %}
+    </ul>
+  </main>
 </body>
 </html>
