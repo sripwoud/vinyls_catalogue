@@ -18,10 +18,10 @@
           <a href="/">Home</a>
         </li>
         <li>
-          {{genre.name}}
+          {{release.title}}
         </li>
         <li>
-          Releases
+          Songs
         </li>
       </ul>
     </nav>
@@ -34,20 +34,18 @@
     {% endfor %}
     {% endif %}
     {% endwith %}
-    <a href="{{url_for('newRelease', genre_id=genre.id)}}">Add new release</a>
+    <a href="{{url_for('newSong', release_id=release.id)}}">Add new song</a>
     <ul>
-      {% for release in releases %}
+      {% for song in songs %}
       <li>
-        <h3>
-	  <a href="{{url_for('showSongs', release_id=release.id)}}">
-	    {{release.title}}
-	  </a>
-	</h3>
-        <p>By {{release.artist}}</p>
-        <p>Label: {{release.label}}</p>
-        <p>Released on {{release.released}}</p>
-        <a href="{{url_for('deleteRelease', genre_id=genre.id, release_id=release.id)}}">Delete</a>
-        <a href="{{url_for('editRelease', genre_id=genre.id, release_id=release.id)}}">Edit</a>
+        <span>{{song.position}}</span>
+        <span>{{song.title}}</span>
+        <span>
+          <a href="{{url_for('deleteSong', release_id=release.id, song_id=song.id)}}">Delete</a>
+        </span>
+        <span>
+          <a href="{{url_for('editSong', release_id=release.id, song_id=song.id)}}">Edit</a>
+        </span>
       </li>
       {% endfor %}
     </ul>

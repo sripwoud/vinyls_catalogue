@@ -17,6 +17,7 @@ def showGenres():
     return render_template('genres.html', genres_count=genres_count)
 
 
+# -------------------------------------------------- GENRE
 @app.route('/genre/new/', methods=['GET', 'POST'])
 def newGenre():
     if request.method == 'POST':
@@ -57,6 +58,7 @@ def deleteGenre(genre_id):
         return render_template('deletegenre.html', genre=genre)
 
 
+# -------------------------------------------------- RELEASES
 @app.route('/genre/<int:genre_id>/')
 def showReleases(genre_id):
     genre = session.query(Genre).filter_by(id=genre_id).one()
@@ -115,6 +117,57 @@ def deleteRelease(genre_id, release_id):
         return render_template('deleterelease.html', genre=genre, release=release)
 
 
+# -------------------------------------------------- SONGS
+@app.route('/release/<int:release_id>/')
+def showSongs(release_id):
+    release = session.query(Album).filter_by(id=release_id).one()
+    songs = session.query(Song).filter_by(release_id=release_id).order_by(Song.position).all()
+    return render_template('songs.html', release=release, songs=songs)
+
+
+@app.route('/release/<int:release_id>/new/', methods=['GET', 'POST'])
+def newSong(release_id):
+    release = session.query(Album).filter_by(id=release_id).one()
+    if request.method == 'POST':
+        song = Album(title=request.form['title'],
+                     position=request.form['artist'],
+                     release_id=release.id)
+        session.add(song)
+        session.commit()
+        flash('New song added!')
+        return redirect(url_for('showSongs', release_id=release_id))
+    if request.method == 'GET':
+        return render_template('newsong.html', release=release)
+
+
+@app.route('/release/<int:release_id>/<int:song_id>/edit/',
+           methods=['GET', 'POST'])
+def editSong(song_id, release_id):
+    song = session.query(Song).filter_by(id=song_id).one()
+    release = session.query(Album).filter_by(id=release_id).one()
+    if request.method == 'POST':
+        if request.form['title']:
+            song.title = request.form['title']
+        if request.form['position']:
+            song.position = request.form['position']
+        session.add(song)
+        session.commit()
+        flash('Song updated!')
+        return redirect(url_for('showSongs', release_id=release_id))
+    return render_template('editsong.html', song=song, release=release)
+
+
+@app.route('/release/<int:release_id>/<int:song_id>/delete/', methods=['GET', 'POST'])
+def deleteSong(song_id, release_id):
+    song = session.query(Song).filter_by(id=song_id).one()
+    release = session.query(Album).filter_by(id=release_id).one()
+    if request.method == 'POST':
+        session.delete(song)
+        session.commit()
+        flash('Song deleted!')
+        return redirect(url_for('showSongs', release_id=release_id))
+    if request.method == 'GET':
+        return render_template('deletesong.html', song=song, release=release)
 # TODO: Make API endpoints
 
 # TODO: Add OAuth
