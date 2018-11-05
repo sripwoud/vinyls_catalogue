@@ -69,7 +69,12 @@ main {
     text-decoration: underline;
 }
 
-/* ------------GENRES----------------- */
+/* ------------RElEASES AND SONGS----------------- */
+
+#release-cover {
+	max-width: 100px;
+}
+
 .flexbox {
 	display: flex;
 	flex-flow: row wrap;
