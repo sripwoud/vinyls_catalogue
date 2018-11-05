@@ -4,9 +4,23 @@ from database_setup import Base, Genre, Album, Song, engine
 from addcollection import session
 from flask import (Flask, render_template, redirect, url_for, request,
                    flash, jsonify)
+from flask import session as login_session
+import random
+import string
 
 
 app = Flask(__name__)
+
+# Anti Foregery token and login------------------------
+
+
+@app.route('/login/')
+def showLogin():
+    # generate random token
+    state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
+    # Store token for later validation
+    login_session['state'] = state
+    return render_template('login.html')
 
 
 # API Endpoints ---------------------------------
@@ -205,3 +219,4 @@ if __name__ == '__main__':
     app.secret_key = 'pass'
     app.debug = True
     app.run(host='0.0.0.0', port=5000)
+    print 'Application runnning...go to http://localhost:5000'
