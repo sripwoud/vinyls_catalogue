@@ -13,6 +13,13 @@ class Genre(Base):
     name = Column(String(20), nullable=False)
     id = Column(Integer, primary_key=True)
 
+    @property
+    def serialize(self):
+        return {
+            'name': self.name,
+            'id': self.id
+        }
+
 
 class Album(Base):
     __tablename__ = "album"
@@ -20,10 +27,22 @@ class Album(Base):
     title = Column(String(80), nullable=False)
     artist = Column(String(80), nullable=False)
     label = Column(String(80), nullable=False)
-    released = Column(String(4))
+    released = Column(String(4), nullable=False)
+    image = Column(String(300), nullable=False)
 
     genre_id = Column(Integer, ForeignKey('genre.id'))
     genre = relationship(Genre)
+
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'artist': self.artist,
+            'label': self.label,
+            'released': self.released,
+            'genre_id': self.genre_id,
+        }
 
 
 class Song(Base):
@@ -34,6 +53,15 @@ class Song(Base):
 
     release_id = Column(Integer, ForeignKey('album.id'))
     album = relationship(Album)
+
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'position': self.position,
+            'title': self.title,
+            'release_id': self.release_id,
+        }
 
 
 engine = create_engine('sqlite:///vinyls.db', connect_args={'check_same_thread':False})

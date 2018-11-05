@@ -12,6 +12,8 @@ Base.metadata.bind = engine
 DBSession = scoped_session(sessionmaker(bind=engine))
 session = DBSession()
 
+#to remove: XdxDFyuAEfqZtiIMPBAMPOtXsqpCpqlnHUKDCdui
+
 
 def getReleasesID(username, token):
     """Look up all the folders in the user collection
@@ -92,7 +94,8 @@ def getReleaseInfo(id_str, token):
             'title': title,
             'label': label,
             'released': released,
-            'songs': songs
+            'songs': songs,
+            'image': image
             }
 
 
@@ -114,6 +117,7 @@ def populateDb(username, token):
                     artist=infos['artist'],
                     label=infos['label'],
                     released=infos['released'],
+                    image=infos['image'],
                     genre=genre
                     )
             session.add(album)

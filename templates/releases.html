@@ -41,6 +41,7 @@
         <a href="{{url_for('showSongs', release_id=release.id)}}" class='link-container'>
           <div class='list-container'>
             <h3>{{release.title}}</h3>
+            <img id="release-cover" src="{{release.image}}" alt="vinyl record">
             <p>By {{release.artist}}</p>
             <p>Label: {{release.label}}</p>
             <p>Released on {{release.released}}</p>
