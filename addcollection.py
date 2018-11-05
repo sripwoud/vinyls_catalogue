@@ -12,8 +12,6 @@ Base.metadata.bind = engine
 DBSession = scoped_session(sessionmaker(bind=engine))
 session = DBSession()
 
-#to remove: XdxDFyuAEfqZtiIMPBAMPOtXsqpCpqlnHUKDCdui
-
 
 def getReleasesID(username, token):
     """Look up all the folders in the user collection
@@ -37,7 +35,9 @@ def getReleasesID(username, token):
     # Loop over folder ids to get all releases in the collection:
     releases_id = []
     for id in folders_id:
-        url = "https://api.discogs.com/users/{}/collection/folders/{}/releases".format(username, id)
+        url = """\
+        https://api.discogs.com/users/{}/collection/folders/{}/releases\
+        """.replace(' ', '').format(username, id)
         releases = json.loads(h.request(
             url,
             'GET',
@@ -49,33 +49,41 @@ def getReleasesID(username, token):
 
 def getReleaseInfo(id_str, token):
     """Get release infos
-    Args: release id string
+    Args: release id string, API token
     Return: dictionary
     """
+
+    # query to get the infos of a specific release
     url = 'https://api.discogs.com/releases/{}'.format(id_str)
     header = {'Authorization': 'Discogs token={}'.format(token)}
     infos = json.loads(httplib2.Http().request(url, headers=header)[1])
-    # artist
+
+    # handle errors in case a key is missing in the response received
     try:
         artist = infos['artists'][0]['name']
     except KeyError:
         artist = 'Unknown'
+
     try:
         title = infos['title']
     except KeyError:
         return
+
     try:
         released = infos['released']
     except KeyError:
         released = 'Unknown'
+
     try:
         genre = infos['genres'][0]
     except KeyError:
         genre = 'Uncategorized'
+
     try:
         label = infos['labels'][0]['name']
     except KeyError:
         label = 'Unknown'
+
     try:
         songs = [{
                 'position': track['position'],
@@ -84,10 +92,12 @@ def getReleaseInfo(id_str, token):
                 ]
     except KeyError:
         return
+
     try:
         image = infos['images'][0]['uri']
     except KeyError:
         image = '/static/vinyl-record.svg'
+
     return {
             'genre': genre,
             'artist': artist,
@@ -101,7 +111,12 @@ def getReleaseInfo(id_str, token):
 
 def populateDb(username, token):
     """Add items found in the user's Discogs collection to the sqlite DB
+    args: Discogs username, Discogs API token
     """
+    # get all the release IDs in the user collection
+    # then get the infos for each release using the api
+    # Use the infos to set values for the new entries in the SQL DB
+    # add new entries in DB
     for release in getReleasesID(username, token):
         infos = getReleaseInfo(release, token)
         if infos:
@@ -111,7 +126,8 @@ def populateDb(username, token):
                 session.commit()
                 print 'Genre added'
             else:
-                genre = session.query(Genre).filter_by(name=infos['genre']).first()
+                genre = (session
+                         .query(Genre).filter_by(name=infos['genre']).first())
             album = Album(
                     title=infos['title'],
                     artist=infos['artist'],
@@ -134,11 +150,9 @@ def populateDb(username, token):
                 session.commit()
                 print 'song added'
     print 'Insertion of new items in DB completed !'
-    # test
-    print len(session.query(Album).all())
 
 
 if __name__ == '__main__':
-    username = raw_input("Enter your username:")
+    username = raw_input("Enter your username: ")
     token = raw_input("Enter your Discogs API token: ")
     populateDb(username, token)

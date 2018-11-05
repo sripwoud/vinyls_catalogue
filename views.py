@@ -2,11 +2,9 @@ from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker, scoped_session
 from database_setup import Base, Genre, Album, Song, engine
 from addcollection import session
-from flask import Flask, render_template, redirect, url_for, request, flash, jsonify
-# engine = create_engine('sqlite:///vinyls.db')
-# Base.metadata.bind = engine
-# DBSession = sessionmaker(bind=engine)
-# session = scoped_session(DBSession())
+from flask import (Flask, render_template, redirect, url_for, request,
+                   flash, jsonify)
+
 
 app = Flask(__name__)
 
@@ -28,20 +26,26 @@ def releasesJSON(genre_id):
 def songsJSON(release_id):
     songs = session.query(Song).filter_by(release_id=release_id).all()
     return jsonify([song.serialize for song in songs])
-    
+
 
 @app.route('/')
 @app.route('/genres/')
 def showGenres():
-    genres_count = session.query(Genre.id, Genre.name, func.count(Album.genre_id)).outerjoin(Album).group_by(Genre).order_by(Genre.name).all()
+    genres_count = (session
+                    .query(Genre.id, Genre.name, func.count(Album.genre_id))
+                    .outerjoin(Album)
+                    .group_by(Genre)
+                    .order_by(Genre.name)
+                    .all())
     return render_template('genres.html', genres_count=genres_count)
 
 
-# -------------------------------------------------- GENRE
+# -------------------------------------------------- GENRES ROUTES
 @app.route('/genre/new/', methods=['GET', 'POST'])
 def newGenre():
     if request.method == 'POST':
-        if not session.query(Genre).filter_by(name=request.form['name']).first():
+        if not (session
+                .query(Genre).filter_by(name=request.form['name']).first()):
             session.add(Genre(name=request.form['name']))
             session.commit()
             flash('New Genre added!')
@@ -78,11 +82,13 @@ def deleteGenre(genre_id):
         return render_template('deletegenre.html', genre=genre)
 
 
-# -------------------------------------------------- RELEASES
+# -------------------------------------------------- RELEASES ROUTES
 @app.route('/genre/<int:genre_id>/')
 def showReleases(genre_id):
     genre = session.query(Genre).filter_by(id=genre_id).one()
-    releases = session.query(Album).filter_by(genre_id=genre_id).order_by(Album.title).all()
+    releases = (session
+                .query(Album)
+                .filter_by(genre_id=genre_id).order_by(Album.title).all())
     return render_template('releases.html', genre=genre, releases=releases)
 
 
@@ -124,7 +130,8 @@ def editRelease(genre_id, release_id):
     return render_template('editrelease.html', genre=genre, release=release)
 
 
-@app.route('/genre/<int:genre_id>/<int:release_id>/delete/', methods=['GET', 'POST'])
+@app.route('/genre/<int:genre_id>/<int:release_id>/delete/',
+           methods=['GET', 'POST'])
 def deleteRelease(genre_id, release_id):
     genre = session.query(Genre).filter_by(id=genre_id).one()
     release = session.query(Album).filter_by(id=release_id).one()
@@ -134,14 +141,17 @@ def deleteRelease(genre_id, release_id):
         flash('Release deleted!')
         return redirect(url_for('showReleases', genre_id=genre_id))
     if request.method == 'GET':
-        return render_template('deleterelease.html', genre=genre, release=release)
+        return render_template('deleterelease.html',
+                               genre=genre, release=release)
 
 
-# -------------------------------------------------- SONGS
+# -------------------------------------------------- SONGS ROUTES
 @app.route('/release/<int:release_id>/')
 def showSongs(release_id):
     release = session.query(Album).filter_by(id=release_id).one()
-    songs = session.query(Song).filter_by(release_id=release_id).order_by(Song.position).all()
+    songs = (session
+             .query(Song)
+             .filter_by(release_id=release_id).order_by(Song.position).all())
     return render_template('songs.html', release=release, songs=songs)
 
 
@@ -150,8 +160,8 @@ def newSong(release_id):
     release = session.query(Album).filter_by(id=release_id).one()
     if request.method == 'POST':
         song = Song(title=request.form['title'],
-                     position=request.form['position'],
-                     release_id=release.id)
+                    position=request.form['position'],
+                    release_id=release.id)
         session.add(song)
         session.commit()
         flash('New song added!')
@@ -177,7 +187,8 @@ def editSong(song_id, release_id):
     return render_template('editsong.html', song=song, release=release)
 
 
-@app.route('/release/<int:release_id>/<int:song_id>/delete/', methods=['GET', 'POST'])
+@app.route('/release/<int:release_id>/<int:song_id>/delete/',
+           methods=['GET', 'POST'])
 def deleteSong(song_id, release_id):
     song = session.query(Song).filter_by(id=song_id).one()
     release = session.query(Album).filter_by(id=release_id).one()
@@ -188,9 +199,6 @@ def deleteSong(song_id, release_id):
         return redirect(url_for('showSongs', release_id=release_id))
     if request.method == 'GET':
         return render_template('deletesong.html', song=song, release=release)
-# TODO: Make API endpoints
-
-# TODO: Add OAuth
 
 
 if __name__ == '__main__':
