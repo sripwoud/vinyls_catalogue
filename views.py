@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker, scoped_session
 from database_setup import Base, Genre, Album, Song, engine
 from addcollection import session
-from flask import Flask, render_template, redirect, url_for, request, flash
+from flask import Flask, render_template, redirect, url_for, request, flash, jsonify
 # engine = create_engine('sqlite:///vinyls.db')
 # Base.metadata.bind = engine
 # DBSession = sessionmaker(bind=engine)
@@ -10,6 +10,25 @@ from flask import Flask, render_template, redirect, url_for, request, flash
 
 app = Flask(__name__)
 
+
+# API Endpoints ---------------------------------
+@app.route('/genres/json/')
+def genresJSON():
+    genres = session.query(Genre).all()
+    return jsonify([genre.serialize for genre in genres])
+
+
+@app.route('/genre/<int:genre_id>/json/')
+def releasesJSON(genre_id):
+    releases = session.query(Album).filter_by(genre_id=genre_id).all()
+    return jsonify([release.serialize for release in releases])
+
+
+@app.route('/release/<int:release_id>/json/')
+def songsJSON(release_id):
+    songs = session.query(Song).filter_by(release_id=release_id).all()
+    return jsonify([song.serialize for song in songs])
+    
 
 @app.route('/')
 @app.route('/genres/')
