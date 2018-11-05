@@ -8,54 +8,25 @@ import pprint
 
 pp = pprint.PrettyPrinter(indent=4)
 
-# engine = create_engine('sqlite:///vinyls.db')
 Base.metadata.bind = engine
 DBSession = scoped_session(sessionmaker(bind=engine))
 session = DBSession()
 
-# test
-# hiphop = Genre(name="Hip Hop")
-# session.add(hiphop)
-# session.commit()
-#
-# album1 = Album(genre=hiphop,
-#                title="Album 1",
-#                artist="Blabla",
-#                label="cool",
-#                released="2018")
-# session.add(album1)
-# session.commit()
-#
-# song1 = Song(album=album1,
-#              title="Song 1",
-#              position="1")
-# session.add(song1)
-# session.commit()
-#
-# # test
-# print session.query(Genre).one().name
-# print session.query(Album).one().title
-# print session.query(Song).one().title
 
-# use discogs API to get my current collection
-
-# Discogs API Token to be included in the GET request headers
-HEADER = {'Authorization': 'Discogs token=XdxDFyuAEfqZtiIMPBAMPOtXsqpCpqlnHUKDCdui'}
-
-
-def getReleasesID(username):
+def getReleasesID(username, token):
     """Look up all the folders in the user collection
-    Args: username
+    Args: username, token
     Return: list of releases ids
     """
     url = "https://api.discogs.com/users/{}/collection/folders".format(username)
     h = httplib2.Http()
+    header = {'Authorization': 'Discogs token={}'.format(token)}
 
     # query to get all folders in the collection
     folders = json.loads(h.request(
         url,
         'GET',
-        headers=HEADER)[1])['folders']
+        headers=header)[1])['folders']
     folders_id = []
     for folder in folders:
         if folder['id'] != 0:
@@ -68,19 +39,20 @@ def getReleasesID(username):
         releases = json.loads(h.request(
             url,
             'GET',
-            headers=HEADER)[1])['releases']
+            headers=header)[1])['releases']
         for release in releases:
             releases_id.append(release['id'])
     return releases_id
 
 
-def getReleaseInfo(id_str):
+def getReleaseInfo(id_str, token):
     """Get release infos
     Args: release id string
     Return: dictionary
     """
     url = 'https://api.discogs.com/releases/{}'.format(id_str)
-    infos = json.loads(httplib2.Http().request(url, headers=HEADER)[1])
+    header = {'Authorization': 'Discogs token={}'.format(token)}
+    infos = json.loads(httplib2.Http().request(url, headers=header)[1])
     # artist
     try:
         artist = infos['artists'][0]['name']
@@ -110,6 +82,10 @@ def getReleaseInfo(id_str):
                 ]
     except KeyError:
         return
+    try:
+        image = infos['images'][0]['uri']
+    except KeyError:
+        image = '/static/vinyl-record.svg'
     return {
             'genre': genre,
             'artist': artist,
@@ -120,11 +96,11 @@ def getReleaseInfo(id_str):
             }
 
 
-def populateDb(username):
+def populateDb(username, token):
     """Add items found in the user's Discogs collection to the sqlite DB
     """
-    for release in getReleasesID(username):
-        infos = getReleaseInfo(release)
+    for release in getReleasesID(username, token):
+        infos = getReleaseInfo(release, token)
         if infos:
             if not session.query(Genre).filter_by(name=infos['genre']).first():
                 genre = Genre(name=infos['genre'])
@@ -159,4 +135,6 @@ def populateDb(username):
 
 
 if __name__ == '__main__':
-    populateDb('Gry0u')
+    username = raw_input("Enter your username:")
+    token = raw_input("Enter your Discogs API token: ")
+    populateDb(username, token)
