@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
   <title>Releases</title>
 </head>
 <body>
@@ -35,11 +35,11 @@
     {% endif %}
     {% endwith %}
     <a href="{{url_for('newRelease', genre_id=genre.id)}}">Add new release</a>
-    <ul class='flexbox'>
+    <ul class="flexbox">
       {% for release in releases %}
-      <li class='list'>
-        <a href="{{url_for('showSongs', release_id=release.id)}}" class='link-container'>
-          <div class='list-container'>
+      <li class="list">
+        <a href="{{url_for('showSongs', release_id=release.id)}}" class="link-container">
+          <div class="list-container">
             <h3>{{release.title}}</h3>
             <img id="release-cover" src="{{release.image}}" alt="vinyl record">
             <p>By {{release.artist}}</p>

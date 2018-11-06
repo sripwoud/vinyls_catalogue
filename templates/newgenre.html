@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
   <title>Add genre</title>
 </head>
 <body>
@@ -33,8 +33,8 @@
     {% endif %}
     {% endwith %}
     <form action="{{url_for('newGenre')}}" method="POST">
-      <input type="text" placeholder='name' name='name' required>
-      <input type="submit" value='Create'>
+      <input type="text" placeholder="name" name="name" required>
+      <input type="submit" value="Create">
     </form>
   </main>
 </body>

@@ -41,5 +41,42 @@
   </div>
   <div id="result"></div>
   </main>
+  <script>
+  function signInCallback(authResult) {
+    // If authentication succeeds
+    if (authResult['code']) {
+      // Hide button
+      $('signinButton').attr('style', 'display: none');
+
+      //  Send one time code
+      // check how server responds
+      // Redirect to home page
+      $.ajax({
+          type: 'POST',
+          url: '/gconnect?state={{state}}',
+          // jquery should not process response into a string
+          processData: false,
+          // binary stream of data is sent
+          contentType: 'application/octet-stream; charset=utf-8',
+          // what is sent
+          data: authResult['code'],
+          success: result => {
+              if (result) {
+                $('#result').html(
+                  `Login successful!</br>${result}</br>Redirect to home page...`);
+                setTimeout(() => {
+                  window.location.href = "/genres";
+                }, 4000)
+              } else if (authResult['error']) {
+                console.log(`Error: ${authResult['error']}`);
+              } else {
+                $('#result').html(`Failed to make a server side call.
+                  Check your configuration and console.`);
+              }
+            }
+        });
+    }
+  }
+  </script>
 </body>
 </html>

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
   <title>Vinyls app</title>
 </head>
 <body>
@@ -24,9 +24,9 @@
     {% endif %}
     {% endwith %}
     <a href="{{url_for('newGenre')}}">Add new genre</a>
-    <ul class='flexbox'>
+    <ul class="felxbox">
       {% for genre_count in genres_count %}
-      <li class='list'>
+      <li class="list">
         <a href="{{url_for('showReleases', genre_id=genre_count[0])}}" class="link-container">
         <div class="list-container">
           <h3>{{genre_count[1]}}</h3>
