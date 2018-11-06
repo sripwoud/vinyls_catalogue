@@ -5,10 +5,11 @@ from flask import (Flask, render_template, redirect, url_for, request,
 from flask import session as login_session
 import httplib2
 import json
-from oauth2client.client import flow_from_clientsecrets
+from oauth2client.client import flow_from_clientsecrets, AccessTokenCredentials
 from oauth2client.client import FlowExchangeError
 import random
 import requests
+from sqlalchemy import func
 import string
 
 CLIENT_ID = json.loads(
@@ -24,7 +25,7 @@ def showLogin():
     # generate random token
     state = ''.join(
         random.choice(
-            string.ascii_uppercase + string.digits) for x in xrange(32))
+            string.ascii_uppercase + string.digits) for x in range(32))
     # Store token for later validation
     login_session['state'] = state
     return render_template('login.html', state=state)
@@ -49,6 +50,7 @@ def gconnect():
         oauth_flow.redirect_uri = 'postmessage'
         # initiate exhange of one time code for credentials
         credentials = oauth_flow.step2_exchange(code)
+        # return credentials
     # handle Error
     except FlowExchangeError:
         response = make_response(
@@ -87,12 +89,12 @@ def gconnect():
 
     # Store access token for later use
     login_session['ggplus_id'] = ggplus_id
-    login_session['credentials'] = credentials
+    login_session['access_token'] = access_token
 
     # Get user info from google account
     userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
     params = {'access_token': credentials.access_token, 'alt': 'json'}
-    answer = request.get(userinfo_url, params=params)
+    answer = requests.get(userinfo_url, params=params)
     data = json.loads(answer.text)
     # store user data for later use
     login_session['username'] = data['name']
