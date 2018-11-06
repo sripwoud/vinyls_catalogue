@@ -24,7 +24,7 @@
     {% endif %}
     {% endwith %}
     <a href="{{url_for('newGenre')}}">Add new genre</a>
-    <ul class="felxbox">
+    <ul class="flexbox">
       {% for genre_count in genres_count %}
       <li class="list">
         <a href="{{url_for('showReleases', genre_id=genre_count[0])}}" class="link-container">
