@@ -1,13 +1,18 @@
-from sqlalchemy import create_engine, func
-from sqlalchemy.orm import sessionmaker, scoped_session
-from database_setup import Base, Genre, Album, Song, engine
+from database_setup import Genre, Album, Song
 from addcollection import session
 from flask import (Flask, render_template, redirect, url_for, request,
-                   flash, jsonify)
+                   flash, jsonify, make_response)
 from flask import session as login_session
+import httplib2
+import json
+from oauth2client.client import flow_from_clientsecrets
+from oauth2client.client import FlowExchangeError
 import random
+import requests
 import string
 
+CLIENT_ID = json.loads(
+    open('client_secrets.json', 'r').read())['web']['client_id']
 
 app = Flask(__name__)
 
@@ -17,10 +22,92 @@ app = Flask(__name__)
 @app.route('/login/')
 def showLogin():
     # generate random token
-    state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
+    state = ''.join(
+        random.choice(
+            string.ascii_uppercase + string.digits) for x in xrange(32))
     # Store token for later validation
     login_session['state'] = state
-    return render_template('login.html')
+    return render_template('login.html', state=state)
+
+
+# Google Sign In Routes -------------------------
+
+@app.route('/gconnect', methods=['POST'])
+def gconnect():
+    # Anti forgery token check
+    if request.args.get('state') != login_session['state']:
+        response = make_response(json.dumps('Invalid state parameter'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+
+    # collect one-time code
+    code = request.data
+    try:
+        # exchange it for credentials:
+        # create oauth_flow object
+        oauth_flow = flow_from_clientsecrets('client_secrets.json', scope='')
+        oauth_flow.redirect_uri = 'postmessage'
+        # initiate exhange of one time code for credentials
+        credentials = oauth_flow.step2_exchange(code)
+    # handle Error
+    except FlowExchangeError:
+        response = make_response(
+            json.dumps('Failed to upgrade the authorization code.'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+
+    # Check if acess token in credentials object is valid
+    access_token = credentials.access_token
+    url = 'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={}'.format(access_token)
+    result = json.loads(httplib2.Http().request(url, 'GET')[1])
+    # if error in access token, abort
+    if result.get('error') is not None:
+        response = make_response(json.dumps(result.get('error')), 500)
+        response.headers['Content-Type'] = 'application/json'
+    # check that access token is for intended user
+    ggplus_id = credentials.id_token['sub']
+    if result['user_id'] != ggplus_id:
+        response = make_response(
+            json.dumps("Token's user ID doesn't match given user ID"), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    # check that access token is for intended app
+    if result['issued_to'] != CLIENT_ID:
+        response = make_response(
+            json.dumps("Token's client ID doesn't match app's"), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    # check if user already logged in
+    stored_credentials = login_session.get('credentials')
+    stored_ggplus_id = login_session.get('ggplus_id')
+    if stored_credentials is not None and ggplus_id == stored_ggplus_id:
+        response = make_response(
+            json.dumps('Current user is already connected.'), 200)
+        response.headers['Content-Type'] = 'application/json'
+
+    # Store access token for later use
+    login_session['ggplus_id'] = ggplus_id
+    login_session['credentials'] = credentials
+
+    # Get user info from google account
+    userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
+    params = {'access_token': credentials.access_token, 'alt': 'json'}
+    answer = request.get(userinfo_url, params=params)
+    data = json.loads(answer.text)
+    # store user data for later use
+    login_session['username'] = data['name']
+    login_session['picture'] = data['picture']
+    login_session['email'] = data['email']
+
+    output = """
+    <h1>
+        Welcome, {}
+    </h1>
+    <img src='{}' style='width: 300px; height: 300px; border-radius: 150px; -webkit-border-radius: 150px;-moz-border-radius:150px' >
+    """.format(login_session['username'],
+               login_session['picture'])
+    flash("You are now logged in as {}".format(login_session['username']))
+    return output
 
 
 # API Endpoints ---------------------------------
