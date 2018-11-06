@@ -13,36 +13,36 @@ h1 {
   text-align: center;
 }
 h1 a {
-  text-transform: uppercase;
-  font-size: 30px;
-  text-decoration: none;
+	font-size: 30px;
+	text-decoration: none;
+  	text-transform: uppercase;
 }
 
 body {
 	background-color: #111518;
 	/* margin: 0; */
-	position:relative;
 	max-width: 100%;
 	overflow-x: hidden;
+	position:relative;
 }
 
 main {
-  max-width: 800px;
 	display: flex;
 	flex-flow: column;
 	margin: auto;
+	max-width: 800px;
 }
 
 /*  -----------------BREADCRUMB ----------------*/
 #breadcrumb {
+	box-shadow: 0 2px 5px 0 #eceee4;
+	font-size: 17px;
+	list-style: none;
+	margin-bottom: 5px;
+	margin-top: 5px;
+	max-width: 100%;
+	padding-bottom: 5px;
     padding-top: 5px;
-    padding-bottom: 5px;
-    box-shadow: 0px 2px 5px 0px #eceee4;
-    list-style: none;
-    font-size: 17px;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    max-width: 100%;
 }
 
 /* Display list items side by side */
@@ -52,9 +52,9 @@ main {
 
 /* Add a slash symbol (/) before/behind each list item */
 #breadcrumb li+li:before {
+	color: #f23f52;
+	content: "/\00a0";
     padding: 4px;
-    color: #f23f52;
-    content: "/\00a0";
 }
 
 /* Add a color to all links inside the list */
@@ -76,37 +76,37 @@ main {
 }
 
 .flexbox {
+	align-content: center;
 	display: flex;
 	flex-flow: row wrap;
-	width: 100%;
 	margin: auto;
 	padding: 0;
-	align-content: center;
+	width: 100%;
 }
 
 li.list{
 	box-shadow: 0px 2px 5px 0px #eceee4;
 	list-style: none;
-	text-align: center;
 	margin: 5px;
+	text-align: center;
 	width: 45%;
 }
 
 .song-list {
+	align-content: center;
 	display: flex;
 	flex-flow: column nowrap;
-	width: 100%;
 	margin: auto;
 	padding: 0;
-	align-content: center;
+	width: 100%;
 }
 
 .song {
-	box-shadow: 0px 2px 5px 0px #eceee4;
+	box-shadow: 0 2px 5px 0 #eceee4;
 	list-style: none;
-	text-align: center;
 	margin-top: 5px;
 	margin-bottom: 5px;
+	text-align: center;
 	width: 100%;
 }
 
@@ -130,3 +130,4 @@ li.list{
 	h1 {
 		font-size: 12px;
 	}
+}
