@@ -178,6 +178,8 @@ def showGenres():
 # -------------------------------------------------- GENRES ROUTES
 @app.route('/genre/new/', methods=['GET', 'POST'])
 def newGenre():
+    if 'username' not in login_session:
+        return redirect('/login')
     if request.method == 'POST':
         if not (session
                 .query(Genre).filter_by(name=request.form['name']).first()):
@@ -194,6 +196,8 @@ def newGenre():
 
 @app.route('/genre/<int:genre_id>/edit/', methods=['GET', 'POST'])
 def editGenre(genre_id):
+    if 'username' not in login_session:
+        return redirect('/login')
     genre = session.query(Genre).filter_by(id=genre_id).one()
     if request.method == 'POST':
         if request.form['name']:
@@ -207,6 +211,8 @@ def editGenre(genre_id):
 
 @app.route('/genre/<int:genre_id>/delete/', methods=['GET', 'POST'])
 def deleteGenre(genre_id):
+    if 'username' not in login_session:
+        return redirect('/login')
     genre = session.query(Genre).filter_by(id=genre_id).one()
     if request.method == 'POST':
         session.delete(genre)
@@ -229,6 +235,8 @@ def showReleases(genre_id):
 
 @app.route('/genre/<int:genre_id>/new/', methods=['GET', 'POST'])
 def newRelease(genre_id):
+    if 'username' not in login_session:
+        return redirect('/login')
     genre = session.query(Genre).filter_by(id=genre_id).one()
     if request.method == 'POST':
         release = Album(title=request.form['title'],
@@ -247,6 +255,8 @@ def newRelease(genre_id):
 @app.route('/genre/<int:genre_id>/<int:release_id>/edit/',
            methods=['GET', 'POST'])
 def editRelease(genre_id, release_id):
+    if 'username' not in login_session:
+        return redirect('/login')
     genre = session.query(Genre).filter_by(id=genre_id).one()
     release = session.query(Album).filter_by(id=release_id).one()
     if request.method == 'POST':
@@ -268,6 +278,8 @@ def editRelease(genre_id, release_id):
 @app.route('/genre/<int:genre_id>/<int:release_id>/delete/',
            methods=['GET', 'POST'])
 def deleteRelease(genre_id, release_id):
+    if 'username' not in login_session:
+        return redirect('/login')
     genre = session.query(Genre).filter_by(id=genre_id).one()
     release = session.query(Album).filter_by(id=release_id).one()
     if request.method == 'POST':
@@ -292,6 +304,8 @@ def showSongs(release_id):
 
 @app.route('/release/<int:release_id>/new/', methods=['GET', 'POST'])
 def newSong(release_id):
+    if 'username' not in login_session:
+        return redirect('/login')
     release = session.query(Album).filter_by(id=release_id).one()
     if request.method == 'POST':
         song = Song(title=request.form['title'],
@@ -308,6 +322,8 @@ def newSong(release_id):
 @app.route('/release/<int:release_id>/<int:song_id>/edit/',
            methods=['GET', 'POST'])
 def editSong(song_id, release_id):
+    if 'username' not in login_session:
+        return redirect('/login')
     song = session.query(Song).filter_by(id=song_id).one()
     release = session.query(Album).filter_by(id=release_id).one()
     if request.method == 'POST':
@@ -325,6 +341,8 @@ def editSong(song_id, release_id):
 @app.route('/release/<int:release_id>/<int:song_id>/delete/',
            methods=['GET', 'POST'])
 def deleteSong(song_id, release_id):
+    if 'username' not in login_session:
+        return redirect('/login')
     song = session.query(Song).filter_by(id=song_id).one()
     release = session.query(Album).filter_by(id=release_id).one()
     if request.method == 'POST':
