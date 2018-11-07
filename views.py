@@ -133,9 +133,8 @@ def gdisconnect():
         del login_session['picture']
         del login_session['username']
 
-        response = make_response(json.dumps('Successfully disconnected.'), 200)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        flash('Successfully disconnected.')
+        return redirect(url_for('showGenres'))
     # Otherwise display error message
     else:
         response = make_response(
