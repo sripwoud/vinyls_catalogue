@@ -10,9 +10,22 @@
 <body>
   <header>
     <nav>
+        <div class="buttons">
+            <a href="{{url_for('showLogin')}}">
+                <button>Log In</button>
+            </a>
+            <a href="{{url_for('gdisconnect')}}" method="post">
+                <button>Log Out</button>
+            </a>
+        </div>
       <h1>
         <a href="/">Vinyls Catalogue</a>
       </h1>
+      <ul id="breadcrumb" aria-label="Breadcrumb" role="navigation">
+        <li>
+          <a href="/">Home</a>
+        </li>
+      </ul>
     </nav>
   </header>
   <main>

@@ -8,15 +8,45 @@ body,p,ul,li,nav,h1, a {
 	line-height: 1.2em;
 }
 
-
+/*  NAV */
+nav {
+	display: flex;
+	flex-flow: row wrap;
+	/* justify-content: center; */
+}
 h1 {
-  text-align: center;
+  text-align: left;
+  flex: 4 0;
+  padding-left: 40px;
 }
 h1 a {
-	font-size: 30px;
+	font-size: 40px;
 	text-decoration: none;
   	text-transform: uppercase;
 }
+
+.buttons {
+	flex: 1 0;
+}
+
+button {
+	display: block;
+	margin: 16px;
+	min-width: 48px;
+	max-width: 100px;
+	min-height: 48px;
+	width: 100%;
+	background-color: #f23f52;
+	box-shadow: 0 2px 5px 0 #eceee4;
+	border: none;
+
+}
+
+button:hover {
+	cursor: pointer;
+}
+
+/* MAIN */
 
 body {
 	background-color: #111518;
@@ -43,6 +73,7 @@ main {
 	max-width: 100%;
 	padding-bottom: 5px;
     padding-top: 5px;
+	flex: 1 100%;
 }
 
 /* Display list items side by side */
@@ -121,13 +152,19 @@ li.list{
 }
 
 
+/* Log In Button */
+#signinButton {
+	margin: auto;
+	margin-top: 10px;
+}
+
 /* media query small screen */
 @media screen and (max-width: 450px) {
   li.list {
 		width: 100%;
 	}
 
-	h1 {
-		font-size: 12px;
+	h1 > a {
+		font-size: 26px;
 	}
 }
