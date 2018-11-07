@@ -67,8 +67,8 @@ def gconnect():
         response = make_response(json.dumps(result.get('error')), 500)
         response.headers['Content-Type'] = 'application/json'
     # check that access token is for intended user
-    ggplus_id = credentials.id_token['sub']
-    if result['user_id'] != ggplus_id:
+    gplus_id = credentials.id_token['sub']
+    if result['user_id'] != gplus_id:
         response = make_response(
             json.dumps("Token's user ID doesn't match given user ID"), 401)
         response.headers['Content-Type'] = 'application/json'
@@ -81,14 +81,14 @@ def gconnect():
         return response
     # check if user already logged in
     stored_credentials = login_session.get('credentials')
-    stored_ggplus_id = login_session.get('ggplus_id')
-    if stored_credentials is not None and ggplus_id == stored_ggplus_id:
+    stored_gplus_id = login_session.get('gplus_id')
+    if stored_credentials is not None and gplus_id == stored_gplus_id:
         response = make_response(
             json.dumps('Current user is already connected.'), 200)
         response.headers['Content-Type'] = 'application/json'
 
     # Store access token for later use
-    login_session['ggplus_id'] = ggplus_id
+    login_session['gplus_id'] = gplus_id
     login_session['access_token'] = access_token
 
     # Get user info from google account
@@ -110,6 +110,38 @@ def gconnect():
                login_session['picture'])
     flash("You are now logged in as {}".format(login_session['username']))
     return output
+
+
+# revoke access token and reset login_session
+@app.route('/gdisconnect/')
+def gdisconnect():
+    # Only disconnect a connected user
+    access_token = login_session['access_token']
+    if access_token is None:
+        response = make_response(
+            json.dumps('Current user not connected.'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    # revoke current user
+    url = 'https://accounts.google.com/o/oauth2/revoke?token={}'.format(access_token)
+    result = httplib2.Http().request(url, 'GET')[0]
+    # if request successful reset session
+    if result['status'] == '200':
+        del login_session['access_token']
+        del login_session['email']
+        del login_session['gplus_id']
+        del login_session['picture']
+        del login_session['username']
+
+        response = make_response(json.dumps('Successfully disconnected.'), 200)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    # Otherwise display error message
+    else:
+        response = make_response(
+            json.dumps('Failed to revoke token for the given user.'), 400)
+        response.headers['Content-Type'] = 'application/json'
+        return response
 
 
 # API Endpoints ---------------------------------
