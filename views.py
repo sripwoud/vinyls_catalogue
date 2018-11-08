@@ -251,6 +251,7 @@ def newRelease(genre_id):
                         artist=request.form['artist'],
                         label=request.form['label'],
                         released=request.form['released'],
+                        image=request.form['image'],
                         genre_id=genre.id)
         session.add(release)
         session.commit()
@@ -276,6 +277,8 @@ def editRelease(genre_id, release_id):
             release.label = request.form['label']
         if request.form['released']:
             release.released = request.form['released']
+        if request.form['image']:
+            release.image = request.form['image']
         session.add(release)
         session.commit()
         flash('Release updated!')
