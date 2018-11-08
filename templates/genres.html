@@ -11,7 +11,7 @@
   <header>
     <nav>
         <div class="buttons">
-          {% if not user %}
+          {% if not logged %}
             <a href="{{url_for('showLogin')}}">
                 <button>Log In</button>
             </a>

@@ -11,12 +11,15 @@
   <header>
     <nav>
         <div class="buttons">
+          {% if not logged %}
             <a href="{{url_for('showLogin')}}">
                 <button>Log In</button>
             </a>
-            <a href="">
+          {% else %}
+            <a href="{{url_for('gdisconnect')}}" method="post">
                 <button>Log Out</button>
             </a>
+          {% endif %}
         </div>
       <h1>
         <a href="/">Vinyls Catalogue</a>
