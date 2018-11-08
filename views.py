@@ -172,13 +172,15 @@ def songsJSON(release_id):
 @app.route('/')
 @app.route('/genres/')
 def showGenres():
+    # check if user logged in:
+    user = login_session['username']
     genres_count = (session
                     .query(Genre.id, Genre.name, func.count(Album.genre_id))
                     .outerjoin(Album)
                     .group_by(Genre)
                     .order_by(Genre.name)
                     .all())
-    return render_template('genres.html', genres_count=genres_count)
+    return render_template('genres.html', genres_count=genres_count, user=user)
 
 
 # -------------------------------------------------- GENRES ROUTES
