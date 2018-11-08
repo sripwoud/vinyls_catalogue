@@ -60,7 +60,8 @@ def gconnect():
 
     # Check if acess token in credentials object is valid
     access_token = credentials.access_token
-    url = 'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={}'.format(access_token)
+    url = 'https://www.googleapis.com/oauth2/v1/' +
+          'tokeninfo?access_token={}'.format(access_token)
     result = json.loads(httplib2.Http().request(url, 'GET')[1])
     # if error in access token, abort
     if result.get('error') is not None:
@@ -105,7 +106,12 @@ def gconnect():
     <h1>
         Welcome, {}
     </h1>
-    <img src='{}' style='width: 300px; height: 300px; border-radius: 150px; -webkit-border-radius: 150px;-moz-border-radius:150px' >
+    <img src='{}'
+         style='width: 300px;
+         height: 300px;
+         border-radius: 150px;
+         -webkit-border-radius: 150px;
+         -moz-border-radius:150px' >
     """.format(login_session['username'],
                login_session['picture'])
     flash("You are now logged in as {}".format(login_session['username']))
@@ -123,7 +129,8 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
     # revoke current user
-    url = 'https://accounts.google.com/o/oauth2/revoke?token={}'.format(access_token)
+    url = 'https://accounts.google.com/o/oauth2/' +
+          'revoke?token={}'.format(access_token)
     result = httplib2.Http().request(url, 'GET')[0]
     # if request successful reset session
     if result['status'] == '200':
