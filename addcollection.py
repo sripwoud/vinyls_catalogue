@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker, scoped_session
-from database_setup import Base, Genre, Album, Song, engine
+from database_setup import Base, Genre, Album, Song, User, engine
 import httplib2
 import json
 import pprint
@@ -14,11 +14,13 @@ session = DBSession()
 
 
 def getReleasesID(username, token):
-    """Look up all the folders in the user collection
+    """Look up all the folders in the user collection.
+
     Args: username, token
     Return: list of releases ids
     """
-    url = "https://api.discogs.com/users/{}/collection/folders".format(username)
+    url = "https://api.discogs.com/users/"\
+          "{}/collection/folders".format(username)
     h = httplib2.Http()
     header = {'Authorization': 'Discogs token={}'.format(token)}
 
@@ -48,11 +50,11 @@ def getReleasesID(username, token):
 
 
 def getReleaseInfo(id_str, token):
-    """Get release infos
+    """Get release infos.
+
     Args: release id string, API token
     Return: dictionary
     """
-
     # query to get the infos of a specific release
     url = 'https://api.discogs.com/releases/{}'.format(id_str)
     header = {'Authorization': 'Discogs token={}'.format(token)}
@@ -110,9 +112,14 @@ def getReleaseInfo(id_str, token):
 
 
 def populateDb(username, token):
-    """Add items found in the user's Discogs collection to the sqlite DB
+    """Add items found in the user's Discogs collection to the sqlite DB.
+
     args: Discogs username, Discogs API token
     """
+    # create user
+    me = User(name='Gry0u', email='gauthriou@google.com')
+    session.add(me)
+    session.commit()
     # get all the release IDs in the user collection
     # then get the infos for each release using the api
     # Use the infos to set values for the new entries in the SQL DB
@@ -121,7 +128,7 @@ def populateDb(username, token):
         infos = getReleaseInfo(release, token)
         if infos:
             if not session.query(Genre).filter_by(name=infos['genre']).first():
-                genre = Genre(name=infos['genre'])
+                genre = Genre(name=infos['genre'], user=me)
                 session.add(genre)
                 session.commit()
                 print 'Genre added'
@@ -134,7 +141,8 @@ def populateDb(username, token):
                     label=infos['label'],
                     released=infos['released'],
                     image=infos['image'],
-                    genre=genre
+                    genre=genre,
+                    user=me
                     )
             session.add(album)
             session.commit()
@@ -144,7 +152,8 @@ def populateDb(username, token):
                 song = Song(
                             position=song['position'],
                             title=song['title'],
-                            album=album
+                            album=album,
+                            user=me
                             )
                 session.add(song)
                 session.commit()
