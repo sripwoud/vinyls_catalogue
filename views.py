@@ -5,7 +5,7 @@ from flask import (Flask, render_template, redirect, url_for, request,
 from flask import session as login_session
 import httplib2
 import json
-from oauth2client.client import flow_from_clientsecrets, AccessTokenCredentials
+from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 import random
 import requests
@@ -467,4 +467,3 @@ if __name__ == '__main__':
     app.secret_key = 'pass'
     app.debug = True
     app.run(host='0.0.0.0', port=5000)
-    print 'Application runnning...go to http://localhost:5000'
