@@ -1,12 +1,17 @@
 from database_setup import Genre, Album, Song, User
 from addcollection import session
-from flask import (Flask, render_template, redirect, url_for, request,
-                   flash, jsonify, make_response)
-from flask import session as login_session
+from flask import (Flask,
+                   render_template,
+                   redirect,
+                   url_for,
+                   request,
+                   flash,
+                   jsonify,
+                   make_response,
+                   ession as login_session)
 import httplib2
 import json
-from oauth2client.client import flow_from_clientsecrets
-from oauth2client.client import FlowExchangeError
+from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
 import random
 import requests
 from sqlalchemy import func
