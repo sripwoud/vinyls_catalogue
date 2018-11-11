@@ -95,17 +95,20 @@ def gconnect():
     login_session['access_token'] = access_token
 
     # Get user info from google account
-    userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
+    userinfo_url = "https://www.googleapis.com/oauth2/v2/userinfo"
     params = {'access_token': credentials.access_token, 'alt': 'json'}
     answer = requests.get(userinfo_url, params=params)
     data = json.loads(answer.text)
     # store user data for later use
-    login_session['username'] = data['name']
+    try:
+        login_session['username'] = data['name']
+    except KeyError:
+        login_session['username'] = 'Unknown'
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
 
     # Retrieve user_id if user exists in DB, or create a new one if it doesn't
-    user_id = getUserID(login_session['email'])
+    user_id = getUserID(data['email'])
     if not user_id:
         login_session['user_id'] = createUser(login_session)
 
@@ -227,15 +230,7 @@ def editGenre(genre_id):
         return redirect('/login')
     genre = session.query(Genre).filter_by(id=genre_id).one()
     if login_session['user_id'] != genre.user_id:
-        return """
-            <script>
-                function myFunction() {
-                    alert('You are not authorized to edit menu items to
-                    this restaurant. Please create your own restaurant in
-                    order to edit items.');
-                }
-            </script><body onload='myFunction()''>
-            """
+        return render_template('notallowed.html')
     if request.method == 'POST':
         if request.form['name']:
             genre.name = request.form['name']
@@ -253,15 +248,7 @@ def deleteGenre(genre_id):
         return redirect('/login')
     genre = session.query(Genre).filter_by(id=genre_id).one()
     if login_session['user_id'] != genre.user_id:
-        return """
-            <script>
-                function myFunction() {
-                    alert('You are not authorized to edit menu items to
-                    this restaurant. Please create your own restaurant in
-                    order to edit items.');
-                }
-            </script><body onload='myFunction()''>
-            """
+        return render_template('notallowed.html')
     if request.method == 'POST':
         session.delete(genre)
         session.commit()
@@ -303,7 +290,9 @@ def newRelease(genre_id):
                         released=request.form['released'],
                         image=request.form['image'],
                         genre_id=genre.id,
-                        user_id=genre.user_id)
+                        # connected user doesn't have to be
+                        # the creator of a genre to add a new release to it
+                        user_id=login_session['user_id'])
         session.add(release)
         session.commit()
         flash('New release added!')
@@ -321,15 +310,7 @@ def editRelease(genre_id, release_id):
     genre = session.query(Genre).filter_by(id=genre_id).one()
     release = session.query(Album).filter_by(id=release_id).one()
     if login_session['user_id'] != release.user_id:
-        return """
-            <script>
-                function myFunction() {
-                    alert('You are not authorized to edit menu items to
-                    this restaurant. Please create your own restaurant in
-                    order to edit items.');
-                }
-            </script><body onload='myFunction()''>
-            """
+        return render_template('notallowed.html')
     if request.method == 'POST':
         if request.form['title']:
             release.title = request.form['title']
@@ -357,15 +338,7 @@ def deleteRelease(genre_id, release_id):
     genre = session.query(Genre).filter_by(id=genre_id).one()
     release = session.query(Album).filter_by(id=release_id).one()
     if login_session['user_id'] != release.user_id:
-        return """
-            <script>
-                function myFunction() {
-                    alert('You are not authorized to edit menu items to
-                    this restaurant. Please create your own restaurant in
-                    order to edit items.');
-                }
-            </script><body onload='myFunction()''>
-            """
+        return render_template('notallowed.html')
     if request.method == 'POST':
         session.delete(release)
         session.commit()
@@ -401,10 +374,14 @@ def newSong(release_id):
     if 'username' not in login_session:
         return redirect('/login')
     release = session.query(Album).filter_by(id=release_id).one()
+    # connected user must be the creator of a release to add a new song to it
+    if login_session['user_id'] != release.user_id:
+        return render_template('notallowed.html')
     if request.method == 'POST':
         song = Song(title=request.form['title'],
                     position=request.form['position'],
                     release_id=release.id,
+                    # force song.user_id == release.user_id
                     user_id=release.user_id)
         session.add(song)
         session.commit()
@@ -423,15 +400,7 @@ def editSong(song_id, release_id):
     song = session.query(Song).filter_by(id=song_id).one()
     release = session.query(Album).filter_by(id=release_id).one()
     if login_session['user_id'] != song.user_id:
-        return """
-            <script>
-                function myFunction() {
-                    alert('You are not authorized to edit menu items to
-                    this restaurant. Please create your own restaurant in
-                    order to edit items.');
-                }
-            </script><body onload='myFunction()''>
-            """
+        return render_template('notallowed.html')
     if request.method == 'POST':
         if request.form['title']:
             song.title = request.form['title']
@@ -453,15 +422,7 @@ def deleteSong(song_id, release_id):
     song = session.query(Song).filter_by(id=song_id).one()
     release = session.query(Album).filter_by(id=release_id).one()
     if login_session['user_id'] != song.user_id:
-        return """
-            <script>
-                function myFunction() {
-                    alert('You are not authorized to edit menu items to
-                    this restaurant. Please create your own restaurant in
-                    order to edit items.');
-                }
-            </script><body onload='myFunction()''>
-            """
+        return render_template('notallowed.html')
     if request.method == 'POST':
         session.delete(song)
         session.commit()
