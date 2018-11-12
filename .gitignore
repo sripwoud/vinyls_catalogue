@@ -1,0 +1,5 @@
+*.pyc
+*.db
+Vagrantfile
+package.json
+.eslintrc.js
