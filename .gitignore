@@ -3,3 +3,4 @@
 Vagrantfile
 package.json
 .eslintrc.js
+client_secrets.json
