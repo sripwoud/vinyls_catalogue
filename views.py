@@ -8,7 +8,7 @@ from flask import (Flask,
                    flash,
                    jsonify,
                    make_response,
-                   ession as login_session)
+                   session as login_session)
 import httplib2
 import json
 from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
