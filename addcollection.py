@@ -117,7 +117,7 @@ def populateDb(username, token):
     args: Discogs username, Discogs API token
     """
     # create user
-    me = User(name='Gry0u', email='gauthriou@google.com')
+    me = User(name='Gry0u', email='gauthriou@gmail.com')
     session.add(me)
     session.commit()
     # get all the release IDs in the user collection
