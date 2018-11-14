@@ -1,5 +1,3 @@
-from sqlalchemy import create_engine
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker, scoped_session
 from database_setup import Base, Genre, Album, Song, User, engine
 import httplib2
