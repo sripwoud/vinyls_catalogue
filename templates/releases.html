@@ -11,7 +11,7 @@
   <header>
     <nav>
         <div class="buttons">
-          {% if not logged %}
+          {% if not user_id %}
             <a href="{{url_for('showLogin')}}">
                 <button>Log In</button>
             </a>
@@ -58,8 +58,10 @@
             <p>Released on {{release.released}}</p>
           </div>
         </a>
-        <a href="{{url_for('deleteRelease', genre_id=genre.id, release_id=release.id)}}">Delete</a>
-        <a href="{{url_for('editRelease', genre_id=genre.id, release_id=release.id)}}">Edit</a></br></br>
+        {% if user_id == release.user_id %}
+            <a href="{{url_for('deleteRelease', genre_id=genre.id, release_id=release.id)}}">Delete</a>
+            <a href="{{url_for('editRelease', genre_id=genre.id, release_id=release.id)}}">Edit</a></br></br>
+        {% endif %}
       </li>
       {% endfor %}
     </ul>
