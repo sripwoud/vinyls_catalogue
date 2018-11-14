@@ -116,7 +116,8 @@ def gconnect():
     user_id = getUserID(data['email'])
     if not user_id:
         login_session['user_id'] = createUser(login_session)
-
+    else:
+        login_session['user_id'] = user_id
     output = """
     <h1>
         Welcome, {}
@@ -154,6 +155,7 @@ def gdisconnect():
         del login_session['gplus_id']
         del login_session['picture']
         del login_session['username']
+        del login_session['user_id']
 
         flash('Successfully disconnected.')
         return redirect(url_for('showGenres'))
@@ -193,18 +195,21 @@ def showGenres():
     """Render template displaying all genres."""
     # check if user logged in:
     if 'username' not in login_session:
-        logged = False
+        user_id = False
     else:
-        logged = True
+        user_id = login_session['user_id']
     genres_count = (session
-                    .query(Genre.id, Genre.name, func.count(Album.genre_id))
+                    .query(Genre.id,
+                           Genre.name,
+                           Genre.user_id,
+                           func.count(Album.genre_id))
                     .outerjoin(Album)
                     .group_by(Genre)
                     .order_by(Genre.name)
                     .all())
     return render_template('genres.html',
                            genres_count=genres_count,
-                           logged=logged)
+                           user_id=user_id)
 
 
 # -------------------------------------------------- GENRES ROUTES
@@ -269,9 +274,9 @@ def showReleases(genre_id):
     """Render template to show all releases of one genre."""
     # check if user logged
     if 'username' not in login_session:
-        logged = False
+        user_id = False
     else:
-        logged = True
+        user_id = login_session['user_id']
     genre = session.query(Genre).filter_by(id=genre_id).one()
     releases = (session
                 .query(Album)
@@ -279,7 +284,7 @@ def showReleases(genre_id):
     return render_template('releases.html',
                            genre=genre,
                            releases=releases,
-                           logged=logged)
+                           user_id=user_id)
 
 
 @app.route('/genre/<int:genre_id>/new/', methods=['GET', 'POST'])
@@ -289,11 +294,12 @@ def newRelease(genre_id):
         return redirect('/login')
     genre = session.query(Genre).filter_by(id=genre_id).one()
     if request.method == 'POST':
+        image = request.form['image'] if request.form['image'] != '' else '/static/record-player.jpeg'
         release = Album(title=request.form['title'],
                         artist=request.form['artist'],
                         label=request.form['label'],
                         released=request.form['released'],
-                        image=request.form['image'],
+                        image=image,
                         genre_id=genre.id,
                         # connected user doesn't have to be
                         # the creator of a genre to add a new release to it
@@ -360,17 +366,19 @@ def showSongs(release_id):
     """Render template to show all songs."""
     # check if user logged
     if 'username' not in login_session:
-        logged = False
+        user_id = False
     else:
-        logged = True
+        user_id = login_session['user_id']
     release = session.query(Album).filter_by(id=release_id).one()
+    genre = session.query(Genre).filter_by(id=release.genre_id).one()
     songs = (session
              .query(Song)
              .filter_by(release_id=release_id).order_by(Song.position).all())
     return render_template('songs.html',
                            release=release,
                            songs=songs,
-                           logged=logged)
+                           user_id=user_id,
+                           genre=genre)
 
 
 @app.route('/release/<int:release_id>/new/', methods=['GET', 'POST'])
