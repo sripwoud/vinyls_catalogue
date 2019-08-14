@@ -1,4 +1,5 @@
 # Music collection management application
+Live version deployed on linux-Apache web server hosted on a Digital Ocean droplet is available [here](http://104.248.253.240.xip.io/).   
 Thought mainly for people having registered their music collection on
 [Discogs](https://www.discogs.com/),
 this web application fulfills the following functions:
